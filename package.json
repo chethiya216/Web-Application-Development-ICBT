@@ -1,0 +1,26 @@
+{
+  "name": "web-application-development-icbt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chethiya216/Web-Application-Development-ICBT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chethiya216/Web-Application-Development-ICBT/issues"
+  },
+  "homepage": "https://github.com/chethiya216/Web-Application-Development-ICBT#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.3.2"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.2"
+  }
+}
