@@ -1,3 +1,6 @@
+<?php include('includes/header.php'); ?>
+    
+
     <!-- Searvices Start -->
     <div class="container-fluid px-0">
         <div class="row g-0">
@@ -1274,3 +1277,4 @@
         </div>
     </div>
     <!-- Product Banner End -->
+<?php include('includes/footer.php'); ?>
