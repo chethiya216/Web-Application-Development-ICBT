@@ -1,29 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMart</title>
+
+    <!-- 1. Local Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- 2. Icons & Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0">
+
+    <!-- 3. Your Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style1.css">
+</head>
+<body>
+
+
+<?php
+    require_once 'config/config.php';
+
+    $sql = "SELECT c.id, c.name, COUNT(p.id) AS product_count 
+            FROM categories c
+            LEFT JOIN products p ON c.id = p.category_id
+            GROUP BY c.id, c.name
+            ORDER BY c.name ASC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $categories = $result->fetch_all(MYSQLI_ASSOC);
+?>
+
 <div class="container-fluid px-5 d-none border-bottom d-lg-block">
     <div class="row gx-0 align-items-center">
         <div class="col-lg-4 text-center text-lg-start mb-lg-0">
             <div class="d-inline-flex align-items-center" style="height: 45px;">
                 <a href="#" class="text-muted me-2"> Help</a><small> / </small>
                 <a href="#" class="text-muted mx-2"> Support</a><small> / </small>
-                <a href="#" class="text-muted ms-2"> Contact</a>
+                <a href="contact.php" class="text-muted ms-2"> Contact</a>
 
             </div>
         </div>
         <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
             <small class="text-dark">Call Us:</small>
-            <a href="#" class="text-muted">(+012) 1234 567890</a>
+            <a href="#" class="text-muted">(+94) 77 987 2447</a>
         </div>
 
         <div class="col-lg-4 text-center text-lg-end">
             <div class="d-inline-flex align-items-center" style="height: 45px;">
-                <div class="dropdown">
+                <!-- <div class="dropdown">
                     <a href="#" class="dropdown-toggle text-muted me-2" data-bs-toggle="dropdown"><small>
-                            USD</small></a>
+                            LKR</small></a>
                     <div class="dropdown-menu rounded">
                         <a href="#" class="dropdown-item"> Euro</a>
                         <a href="#" class="dropdown-item"> Dolar</a>
                     </div>
-                </div>
-                <div class="dropdown">
+                </div> -->
+                <!-- <div class="dropdown">
                     <a href="#" class="dropdown-toggle text-muted mx-2" data-bs-toggle="dropdown"><small>
                             English</small></a>
                     <div class="dropdown-menu rounded">
@@ -32,18 +69,17 @@
                         <a href="#" class="dropdown-item"> Spanol</a>
                         <a href="#" class="dropdown-item"> Italiano</a>
                     </div>
-                </div>
+                </div> -->
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle text-muted ms-2" data-bs-toggle="dropdown"><small><i
                                 class="fa fa-home me-2"></i> My Dashboard</small></a>
                     <div class="dropdown-menu rounded">
-                        <a href="#" class="dropdown-item"> Login</a>
+                        <a href="login.php" class="dropdown-item"> Login</a>
                         <a href="#" class="dropdown-item"> Wishlist</a>
-                        <a href="#" class="dropdown-item"> My Card</a>
                         <a href="#" class="dropdown-item"> Notifications</a>
                         <a href="#" class="dropdown-item"> Account Settings</a>
                         <a href="#" class="dropdown-item"> My Account</a>
-                        <a href="#" class="dropdown-item"> Log Out</a>
+                        <a href="logout.php" class="dropdown-item"> Log Out</a>
                     </div>
                 </div>
             </div>
@@ -54,7 +90,7 @@
     <div class="row gx-0 align-items-center text-center">
         <div class="col-md-4 col-lg-3 text-center text-lg-start">
             <div class="d-inline-flex align-items-center">
-                <a href="" class="navbar-brand p-0">
+                <a href="index.php" class="navbar-brand p-0">
                     <h1 class="display-5 text-primary m-0"><i
                             class="fas fa-shopping-bag text-secondary me-2"></i>CMart</h1>
                     <!-- <img src="img/logo.png" alt="Logo"> -->
@@ -67,11 +103,11 @@
                     <input class="form-control border-0 rounded-pill w-100 py-3" type="text"
                         data-bs-target="#dropdownToggle123" placeholder="Search Looking For?">
                     <select class="form-select text-dark border-0 border-start rounded-0 p-3" style="width: 200px;">
-                        <option value="All Category">All Category</option>
-                        <option value="Pest Control-2">Category 1</option>
-                        <option value="Pest Control-3">Category 2</option>
-                        <option value="Pest Control-4">Category 3</option>
-                        <option value="Pest Control-5">Category 4</option>
+                        <option value="All Category" selected>All Category</option>
+                        <?php foreach ($categories as $category) :  ?>
+                            <option value="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></option>
+                        <?php endforeach; ?>
+
                     </select>
                     <button type="button" class="btn btn-primary rounded-pill py-3 px-5" style="border: 0;"><i
                             class="fas fa-search"></i></button>
@@ -79,12 +115,10 @@
             </div>
         </div>
         <div class="col-md-4 col-lg-3 text-center text-lg-end">
-            <div class="d-inline-flex align-items-center">
-                <a href="#" class="text-muted d-flex align-items-center justify-content-center me-3"><span
-                        class="rounded-circle btn-md-square border"><i class="fas fa-random"></i></i></a>
-                <a href="#" class="text-muted d-flex align-items-center justify-content-center me-3"><span
+            <div class="d-inline-flex align-items-center">  
+                <a href="wishlist.php" class="text-muted d-flex align-items-center justify-content-center me-3"><span
                         class="rounded-circle btn-md-square border"><i class="fas fa-heart"></i></a>
-                <a href="#" class="text-muted d-flex align-items-center justify-content-center"><span
+                <a href="cart.php" class="text-muted d-flex align-items-center justify-content-center"><span
                         class="rounded-circle btn-md-square border"><i class="fas fa-shopping-cart"></i></span>
                     <span class="text-dark ms-2">$0.00</span></a>
             </div>
@@ -102,36 +136,29 @@
                     <div class="collapse navbar-collapse rounded-bottom" id="allCat">
                         <div class="navbar-nav ms-auto py-0">
                             <ul class="list-unstyled categories-bars">
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Accessories</a>
-                                        <span>(3)</span>
-                                    </div>
-                                </li>
-                                <li>
+                               <?php if (empty($categories)): ?>
+                                    <li>
+                                        <div class="categories-bars-item">No Categories Found</div>
+                                    </li>
+                                <?php else: ?>
+                                    <?php foreach ($categories as $category): ?>
+                                        <li>
+                                            <div class="categories-bars-item">
+                                                <a href="shop.php?id=<?php echo $category['id']; ?>">
+                                                    <?php echo htmlspecialchars($category['name']); ?>
+                                                </a>
+                                                <span>(<?php echo $category['product_count']; ?>)</span>
+                                            </div>
+                                        </li>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+
+                                <!-- <li>
                                     <div class="categories-bars-item">
                                         <a href="#">Electronics & Computer</a>
                                         <span>(5)</span>
                                     </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Laptops & Desktops</a>
-                                        <span>(2)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">Mobiles & Tablets</a>
-                                        <span>(8)</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="categories-bars-item">
-                                        <a href="#">SmartPhone & Smart TV</a>
-                                        <span>(5)</span>
-                                    </div>
-                                </li>
+                                </li>                              -->
                             </ul>
                         </div>
                     </div>
@@ -150,8 +177,8 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="index.html" class="nav-item nav-link active">Home</a>
-                            <a href="shop.html" class="nav-item nav-link">Shop</a>
+                            <a href="index.php" class="nav-item nav-link active">Home</a>
+                            <a href="shop.php" class="nav-item nav-link">Shop</a>
                             <a href="single.html" class="nav-item nav-link">Single Page</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
@@ -208,3 +235,9 @@
             </div>
         </div>
     </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
