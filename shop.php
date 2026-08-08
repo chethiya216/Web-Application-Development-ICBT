@@ -2,6 +2,20 @@
     require_once("config/config.php");
     include('includes/header.php'); 
 
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+    if ($page < 1) {
+    $page = 1;
+    }
+
+    $productsPerPage = 18;
+    $offset = ($page - 1) * $productsPerPage;
+
+    $result = $conn->query("SELECT COUNT(*) AS total FROM products");
+    $totalProducts = $result->fetch_assoc()['total'];
+
+    $totalPages = ceil($totalProducts / $productsPerPage);
+
     $sql_categories = "SELECT c.id, c.name AS category_name, COUNT(p.id) AS product_count 
                 FROM categories c 
                 LEFT JOIN products p ON c.id = p.category_id 
@@ -14,7 +28,8 @@
     $sql_products = "SELECT p.*, c.name AS category_name 
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
-                ORDER BY p.id DESC";
+                ORDER BY p.id DESC
+                LIMIT $productsPerPage OFFSET $offset";
     $stmt_prod = $conn->prepare($sql_products);
     $stmt_prod->execute();
     $products = $stmt_prod->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -23,11 +38,10 @@
 
     $min_price = !empty($prices) ? min($prices) : 0;
     $max_price = !empty($prices) ? max($prices) : 1000;
-
 ?>
 
     
-    <!-- Searvices Start -->
+    <!-- Services Start -->
     <div class="container-fluid px-0">
         <div class="row g-0">
             <div class="col-6 col-md-4 col-lg-2 border-start border-end wow fadeInUp" data-wow-delay="0.1s">
@@ -374,20 +388,27 @@
                                     </div>
                                 </div>
                                 <?php endforeach; ?>
-                            <!-- </div> -->
-                                <div class="col-12 wow fadeInUp" data-wow-delay="0.1s">
-                                    <div class="pagination d-flex justify-content-center mt-5">
-                                        <a href="#" class="rounded">&laquo;</a>
-                                        <a href="#" class="active rounded">1</a>
-                                        <a href="#" class="rounded">2</a>
-                                        <a href="#" class="rounded">3</a>
-                                        <a href="#" class="rounded">4</a>
-                                        <a href="#" class="rounded">5</a>
-                                        <a href="#" class="rounded">6</a>
-                                        <a href="#" class="rounded">&raquo;</a>
-                                    </div>
-                                </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="col-12 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="pagination d-flex justify-content-center mt-5">
+                            <?php if ($page > 1): ?>
+                                <a href="?page=<?php echo $page - 1; ?>" class="rounded">&laquo;</a>
+                            <?php endif; ?>
+
+                            <!-- Page Numbers -->
+                            <?php for($i = 1; $i <= $totalPages; $i++): ?>
+
+                                <a href="?page=<?php echo $i; ?>&category_id=<?php echo $category['id']; ?>"  class="rounded <?php echo ($i == $page) ? 'active' : ''; ?>">
+                                    <?php echo $i; ?>
+                                </a>
+
+                            <?php endfor; ?>
+
+                            <?php if ($page < $totalPages): ?>
+                                <a href="?page=<?php echo $page + 1; ?>" class="rounded">&raquo;</a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -421,8 +442,7 @@
                                 style="background: rgba(242, 139, 0, 0.5);">
                                 <h2 class="display-2 text-secondary">SALE</h2>
                                 <h4 class="display-5 text-white mb-4">Get UP To 50% Off</h4>
-                                <a href="#" class="btn btn-secondary rounded-pill align-self-center py-2 px-4">Shop
-                                    Now</a>
+                                <a href="#" class="btn btn-secondary rounded-pill align-self-center py-2 px-4">Shop Now</a>
                             </div>
                         </div>
                     </a>
